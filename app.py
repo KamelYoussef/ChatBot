@@ -11,21 +11,26 @@ st.set_page_config(page_title="Chat Bot", page_icon="🤖")
 st.title("ChatBot")
 
 
-def get_response(user_query, chat_history):
+def get_Response(user_query, chat_history):
+    """
+    Return a response based on the given user query and chat history.
+    """
+
     template = """
-    You are a helpful assistant. Answer the following questions considering the history of the conversation:
+    You are a super helpful python programmer. Your mission is to code review other programmers code :
 
     Chat history: {chat_history}
 
     User question: {user_question}
     
-    Jump straight to the response and don't give any thoughts steps.
+    In bullet points, correct what's wrong in the code, or approve the code.
     """
 
     prompt = ChatPromptTemplate.from_template(template)
 
     llm = llm = Ollama(
         model="stablelm-zephyr",
+        #model="codellama",
         base_url="http://localhost:11434",
         verbose=True,
         callback_manager=CallbackManager([StreamingStdOutCallbackHandler()])
@@ -38,10 +43,11 @@ def get_response(user_query, chat_history):
         "user_question": user_query,
     })
 
+
 # session state
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = [
-        AIMessage(content="Hello, I am a bot. How can I help you?"),
+        AIMessage(content="Hello, I am super helpful programmer assistant. How can I help you today ?"),
     ]
 
 # conversation
@@ -62,7 +68,7 @@ if user_query is not None and user_query != "":
         st.markdown(user_query)
 
     with st.chat_message("AI"):
-        response = st.write_stream(get_response(user_query, st.session_state.chat_history))
+        response = st.write_stream(get_Response(user_query, st.session_state.chat_history))
 
     st.session_state.chat_history.append(AIMessage(content=response))
 
